@@ -1,0 +1,9 @@
+.DS_Store
+.settings
+.cproject
+.project
+*.exe
+*.o
+*.i686
+*.x86_64
+*.osx
