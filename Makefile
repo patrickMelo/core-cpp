@@ -9,7 +9,7 @@
 
 CXX			= g++
 CXX_FLAGS	= -O3 -std=c++0x -fno-pic -Wno-sign-compare -Wno-write-strings -Wno-narrowing -D_FILE_OFFSET_BITS=64
-DEBUG_FLAGS	= -g3 -DVECTR_ENABLE_DEBUGGER=1
+DEBUG_FLAGS	= -g3 -DCORE_ENABLE_DEBUGGER=1
 EXE_PATH	= ./Core
 INCLUDES	= -I./
 LIBS		=
