@@ -48,3 +48,11 @@ Features
   - FromInt( value )
   - FromFloat( value )
   - FromBool( value )
+
+* Other string functions:
+  - Explode( str, separator, &list )
+  - EnsureSuffix( str, suffix )
+  - RemoveSuffix( str, suffix )
+  - Trim( str )
+  - Replace( str, oldString, newString )
+  - AddSlashes( str )
