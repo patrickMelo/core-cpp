@@ -108,6 +108,12 @@ typedef unsigned char			uchar;
 typedef std::string				string;
 typedef char*					cstring;
 
+// List Types
+
+typedef std::vector<int>	IntList;
+typedef std::vector<float>	FloatList;
+typedef std::vector<string>	StringList;
+
 // Pointer Types
 
 typedef uint8*	buffer;
@@ -213,6 +219,108 @@ static inline string FromFloat( double value )
 }
 
 #define FromBool( value ) ( value ? "true" : "false" )
+
+static inline void Explode( const string str, const string separator, StringList &list )
+{
+	list.clear();
+
+	if ( str.empty() )
+	{
+		return;
+	}
+
+	int64 lastPosition = -1;
+	int64 nextPosition = str.find( separator, 0 );
+
+	while ( nextPosition != std::string::npos )
+	{
+		list.push_back( str.substr( lastPosition + 1, nextPosition - lastPosition - 1 ) );
+		lastPosition = nextPosition;
+		nextPosition = str.find( separator, lastPosition + 1);
+	}
+
+	if ( lastPosition < str.size() - 1 )
+	{
+		list.push_back( str.substr( lastPosition + 1 ) );
+	}
+}
+
+static inline string EnsureSuffix( const string str, const string suffix )
+{
+	if ( str.size() < suffix.size() ) {
+		return str + suffix;
+	}
+
+	return str.substr( str.size() - suffix.size() ) != suffix ? str + suffix : str;
+}
+
+static inline string RemoveSuffix( const string str, const string suffix )
+{
+	if ( str.size() < suffix.size() )
+	{
+		return str;
+	}
+
+	return str.substr( str.size() - suffix.size() ) == suffix ? str.substr( 0, str.size() - suffix.size() ) : str;
+}
+
+static inline string Trim( const string str )
+{
+	string trimmedString = str;
+	uint64 leftPos = trimmedString.find_first_not_of( "\t\r\n " );
+
+	if ( leftPos != std::string::npos )
+	{
+		trimmedString = trimmedString.erase( 0, leftPos );
+	}
+
+	uint64 rightPos = trimmedString.find_last_not_of( "\t\r\n " );
+
+	if ( rightPos != std::string::npos )
+	{
+		trimmedString = trimmedString.erase( rightPos + 1 );
+	}
+
+	return trimmedString;
+}
+
+static inline string Replace( const string str, const string oldString, const string newString )
+{
+	string finalString = str;
+	uint64 charIndex = finalString.find( oldString );
+	uint oldStringLength = oldString.length();
+	uint newStringLength = newString.length();
+
+	while ( charIndex != std::string::npos )
+	{
+		finalString = finalString.substr( 0, charIndex ) + newString + finalString.substr( charIndex + oldStringLength );
+		charIndex = finalString.find( oldString, charIndex + newStringLength );
+	}
+
+	return finalString;
+}
+
+static inline string AddSlashes( const string str )
+{
+	string escapedString = "";
+
+	for ( int64 charIndex = 0; charIndex < str.size(); ++charIndex )
+	{
+		switch ( str[ charIndex ] )
+		{
+			case '"':
+			case '\\':
+			{
+				escapedString += '\\';
+				break;
+			}
+		}
+
+		escapedString += str[ charIndex ];
+	}
+
+	return escapedString;
+}
 
 // Platform Specific Definitions
 
