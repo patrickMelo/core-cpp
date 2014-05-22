@@ -50,6 +50,7 @@ Features
   - FromBool( value )
 
 * Other string functions:
+  - Implode( list, separator )
   - Explode( str, separator, &list )
   - EnsureSuffix( str, suffix )
   - RemoveSuffix( str, suffix )

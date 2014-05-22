@@ -55,7 +55,7 @@
 	#elif defined( __APPLE__ ) || defined( __MACH__ )
 			#define OS_OSX
 			#define OS_NAME "OSX"
-		#elif defined( _WIN32 ) || defined( __CYGWIN__ )
+		#elif defined( _WIN32 ) || defined( _WIN64 ) || defined( __CYGWIN__ )
 				#define OS_WINDOWS
 				#define OS_NAME "Windows"
 			#else
@@ -82,6 +82,9 @@ typedef int64_t	int64;
 typedef unsigned long	ulong;
 typedef unsigned short	ushort;
 
+typedef std::map<std::string, int>	IntMap;
+typedef std::vector<int>			IntList;
+
 // Integer Union Types
 
 union int64u {
@@ -107,12 +110,8 @@ union int16u {
 typedef unsigned char			uchar;
 typedef std::string				string;
 typedef char*					cstring;
-
-// List Types
-
-typedef std::vector<int>	IntList;
-typedef std::vector<float>	FloatList;
-typedef std::vector<string>	StringList;
+typedef std::vector<string>		StringList;
+typedef std::map<string,string>	StringMap;
 
 // Pointer Types
 
@@ -198,7 +197,7 @@ const cstring	ENDIAN_NAMES[ 2 ]	= { "Little Endian", "Big Endian" };
 #define ToFloat( string ) std::atof( string.c_str() )
 #define ToBool( string ) ( ( string == "1" ) || ( string == "true" ) || ( string == "on" ) || ( string == "yes" ) )
 
-static inline string FromInt( int64 value )
+static inline string FromInt( const int64 value )
 {
 	static char fromBuffer[ 30 ];
 
@@ -211,14 +210,39 @@ static inline string FromInt( int64 value )
 	return fromBuffer;
 }
 
-static inline string FromFloat( double value )
+static inline string FromFloat( const double value, const int precision = -1 )
 {
 	static char fromBuffer[ 30 ];
-	sprintf( fromBuffer, "%f", value );
+
+	switch ( precision )
+	{
+		case 1: sprintf( fromBuffer, "%.1f", value ); break;
+		case 2: sprintf( fromBuffer, "%.2f", value ); break;
+		case 3: sprintf( fromBuffer, "%.3f", value ); break;
+		case 4: sprintf( fromBuffer, "%.4f", value ); break;
+		case 5: sprintf( fromBuffer, "%.5f", value ); break;
+		case 6: sprintf( fromBuffer, "%.6f", value ); break;
+		case 7: sprintf( fromBuffer, "%.7f", value ); break;
+		case 8: sprintf( fromBuffer, "%.8f", value ); break;
+		default: sprintf( fromBuffer, "%f", value ); break;
+	}
+
 	return fromBuffer;
 }
 
 #define FromBool( value ) ( value ? "true" : "false" )
+
+static inline string Implode( const StringList list, const string separator )
+{
+	string finalString = "";
+
+	for ( StringList::const_iterator item = list.begin(); item != list.end(); ++item )
+	{
+		finalString += ( *item ) + separator;
+	}
+
+	return finalString.substr( 0, finalString.size() - separator.size() );
+}
 
 static inline void Explode( const string str, const string separator, StringList &list )
 {
