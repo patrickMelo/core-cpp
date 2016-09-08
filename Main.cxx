@@ -2,14 +2,14 @@
  * Main.cxx
  *
  * This file is part of the Core C++ source code.
- * Copyright 2014 Patrick L. Melo <patrick@patrickmelo.com.br>
+ * Copyright 2014-2016 Patrick L. Melo <patrick@patrickmelo.com.br>
  */
 
 #include "Core.hxx"
 
 // Auxiliary Functions
 
-void SignalHandler( int signal )
+void SignalHandler( int signalCode )
 {
 	/****************************************/
 	/* Put your signal handling stuff here. */
@@ -18,18 +18,31 @@ void SignalHandler( int signal )
 	/****************************************/
 	/****************************************/
 	/****************************************/
-	exit( signal );
+
+	if ( signalCode != SIGINT )
+		exit( signalCode );
 }
 
 // Main
 
 int main( int numberOfArguments, cstring* arguments )
 {
-	/* Attach the signal handler */
+	/* Attach the signal handler. */
 
-	signal( SIGABRT, SignalHandler );
-	signal( SIGINT, SignalHandler );
-	signal( SIGTERM, SignalHandler );
+	struct sigaction signalAction;
+
+	signalAction.sa_handler = SignalHandler;
+	sigemptyset( &signalAction.sa_mask );
+	signalAction.sa_flags = 0;
+
+	sigaction( SIGHUP, &signalAction, NULL );
+	sigaction( SIGINT, &signalAction, NULL );
+	sigaction( SIGQUIT, &signalAction, NULL );
+	sigaction( SIGILL, &signalAction, NULL );
+	sigaction( SIGABRT, &signalAction, NULL );
+	sigaction( SIGFPE, &signalAction, NULL );
+	sigaction( SIGSEGV, &signalAction, NULL );
+	sigaction( SIGTERM, &signalAction, NULL );
 
 	/* Print the header. */
 
@@ -38,9 +51,14 @@ int main( int numberOfArguments, cstring* arguments )
 	Info( "*", "Copyright %s", COPYRIGHT_INFO );
 	Info( "*", "" );
 
-	/* Initialized the random number generator. */
+	Debug( "*", "" );
+	Debug( "*", "--- DEVELOPMENT VERSION ---" );
+	Debug( "*", "" );
+
+	/* Initialize the random number generator and disable the output buffering. */
 
 	srand( time( NULL ) );
+	setbuf( stdout, NULL );
 
 	/*******************************/
 	/* Put your program code here. */

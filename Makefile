@@ -2,7 +2,7 @@
 # Makefile
 #
 # This file is part of the Core C++ source code.
-# Copyright 2014 Patrick L. Melo <patrick@patrickmelo.com.br>
+# Copyright 2014-2016 Patrick L. Melo <patrick@patrickmelo.com.br>
 #
 
 # Common Variables

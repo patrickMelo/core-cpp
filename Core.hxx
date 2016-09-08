@@ -2,7 +2,7 @@
  * Core.hxx
  *
  * This file is part of the Core C++ source code.
- * Copyright 2014 Patrick L. Melo <patrick@patrickmelo.com.br>
+ * Copyright 2014-2016 Patrick L. Melo <patrick@patrickmelo.com.br>
  */
 
 #ifndef CORE_H
@@ -110,6 +110,7 @@ union int16u {
 typedef unsigned char			uchar;
 typedef std::string				string;
 typedef char*					cstring;
+typedef char const *			charconst;
 typedef std::vector<string>		StringList;
 typedef std::map<string,string>	StringMap;
 
@@ -129,7 +130,7 @@ const uint		VERSION_MAJOR	= 0;
 const uint		VERSION_MINOR	= 1;
 const uint		VERSION_PATCH	= 0;
 
-const cstring	COPYRIGHT_INFO	= "2014 Patrick L. Melo <patrick@patrickmelo.com.br>";
+const cstring	COPYRIGHT_INFO	= "2014-2016 Patrick L. Melo <patrick@patrickmelo.com.br>";
 
 // Buffers
 
@@ -142,11 +143,14 @@ const cstring	COPYRIGHT_INFO	= "2014 Patrick L. Melo <patrick@patrickmelo.com.br
 #ifdef CORE_ENABLE_DEBUGGER
 	#ifdef CORE_COLOR_MESSAGES
 		#define Debug( tag, message, ...) printf( "\033[1;35m[%s] " message "\033[0m\n", tag, ##__VA_ARGS__ )
+		#define Stub() std::printf( "\033[1;36m[Stub] %s in %s @ %d\033[0m\n", __PRETTY_FUNCTION__, __FILE__, __LINE__ )
 	#else
 		#define Debug( tag, message, ...) printf( "[%s] " message "\n", tag, ##__VA_ARGS__ )
+		#define Stub() std::printf( "[Stub] %s in %s @ %d\n", __PRETTY_FUNCTION__, __FILE__, __LINE__ )
 	#endif
 #else
 	#define Debug( tag, message, ... )
+	#define Stub()
 #endif
 
 #ifdef CORE_COLOR_MESSAGES
@@ -158,6 +162,18 @@ const cstring	COPYRIGHT_INFO	= "2014 Patrick L. Melo <patrick@patrickmelo.com.br
 	#define Warning( tag, message, ... ) printf( "[%s] Warning: " message "\n" , tag, ##__VA_ARGS__ );
 	#define Error( tag, message, ... ) printf( "[%s] Error: " message "\n" , tag, ##__VA_ARGS__ );
 #endif
+
+// Casts
+
+#define UINT( value ) static_cast<uint>( value )
+#define U8( value ) static_cast<uint8>( value )
+#define U16( value ) static_cast<uint16>( value )
+#define U32( value ) static_cast<uint32>( value )
+#define U64( value ) static_cast<uint64>( value )
+#define I8( value ) static_cast<int8>( value )
+#define I16( value ) static_cast<int16>( value )
+#define I32( value ) static_cast<int32>( value )
+#define I64( value ) static_cast<int64>( value )
 
 // Endianness
 
@@ -350,7 +366,11 @@ static inline string AddSlashes( const string str )
 
 #ifdef OS_WINDOWS
 	#ifndef _WIN32_WINNT
-		#define _WIN32_WINNT 0x0501 // Windows XP
+		#define _WIN32_WINNT _WIN32_WINNT_WIN7 // Windows 7
+	#endif
+
+	#ifndef NTDDI_VERSION
+		#define NTDDI_VERSION NTDDI_WIN7 // Windows 7
 	#endif
 
 	#ifndef WIN32_LEAN_AND_MEAN
